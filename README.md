@@ -1,4 +1,4 @@
-![status](https://img.shields.io/badge/status-in%20progress-yellow
+![status](https://img.shields.io/badge/status-in%20progress-yellow)
 
 # Standard App
 
