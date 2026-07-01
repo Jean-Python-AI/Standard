@@ -1,0 +1,1 @@
+ALTER TABLE `habits` ADD `price` integer DEFAULT 0 NOT NULL;
