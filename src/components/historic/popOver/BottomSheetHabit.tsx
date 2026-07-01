@@ -1,10 +1,10 @@
-import BinIcon from '@/assets/icons/bin.svg';
 import CoinsIcon from '@/assets/icons/Coins.svg';
-import { BorderRadius, Colors, Fonts, IconSize, Opacity, Spacing, Typography } from '@/constants';
+import { BorderRadius, Colors, IconSize, Opacity, Spacing, Typography } from '@/constants';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector, TextInput } from 'react-native-gesture-handler';
 import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import ConfirmDeletePopOver from './ConfirmDeletePopOver';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -23,6 +23,7 @@ interface BottomSheetHabitProps {
 
 export default function BottomSheetHabit({ visible, onClose, id, label, price, onSave, onDelete }: BottomSheetHabitProps) {
   const [text, setText] = useState('');
+  const [confirmVisible, setConfirmVisible] = useState(false);
 
   useEffect(() => {
     setText(label ?? '');
@@ -69,6 +70,11 @@ export default function BottomSheetHabit({ visible, onClose, id, label, price, o
   };
 
   const handleDelete = async () => {
+    setConfirmVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    setConfirmVisible(false);
     const habitId = id;
     onClose();
     await new Promise(r => setTimeout(r, 300));
@@ -106,16 +112,17 @@ export default function BottomSheetHabit({ visible, onClose, id, label, price, o
                 style={styles.deleteButton}
                 onPress={handleDelete}
               >
-                <BinIcon width={24} height={24} color="white" />
-                <Text style={styles.textDelete}>Delete</Text>
+                {price > 0 ? (
+                  <View style={styles.refundRow}>
+                    <Text style={styles.refundText}>+{price}</Text>
+                    <CoinsIcon width={IconSize.xs} height={IconSize.xs} color={Colors.White} />
+                  </View>
+                ) : (
+                  <Text style={styles.saveText}>Delete</Text>
+                )}
               </AnimatedPressable>
 
-              {price > 0 && (
-                <View style={styles.refundRow}>
-                  <CoinsIcon width={IconSize.xs} height={IconSize.xs} />
-                  <Text style={styles.refundText}>+{price}</Text>
-                </View>
-              )}
+              
 
               <AnimatedPressable
                 style={styles.saveButton}
@@ -127,6 +134,14 @@ export default function BottomSheetHabit({ visible, onClose, id, label, price, o
           </View>
         </View>
       </Animated.View>
+
+      <ConfirmDeletePopOver
+        visible={confirmVisible}
+        habitName={label ?? ''}
+        refundAmount={price}
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmVisible(false)}
+      />
     </View>
   );
 }

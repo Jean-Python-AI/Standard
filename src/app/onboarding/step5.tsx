@@ -6,12 +6,18 @@ import { useHabitActions } from '@/hooks/useHabitActions';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function Step5() {
-  const { name, color, colorId, icon } = useOnboarding();
-  const { create } = useHabitActions();
+  const { name, color, colorId, icon, createdHabitId, setCreatedHabitId } = useOnboarding();
+  const { create, remove } = useHabitActions();
   const SelectedIcon = ICON_MAP[icon];
 
   const handleCreate = async () => {
-    await create(name, icon, color, colorId, 0);
+    if (createdHabitId !== null) {
+      await remove(createdHabitId);
+    }
+    const newId = await create(name, icon, color, colorId, 0);
+    if (typeof newId === 'number') {
+      setCreatedHabitId(newId);
+    }
   };
 
   return (

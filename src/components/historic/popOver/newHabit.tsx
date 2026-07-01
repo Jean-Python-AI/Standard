@@ -67,7 +67,8 @@ export default function NewHabitContent({ onCreated, price, coins, onDeduct }: N
         onPress={handleCreate}
         disabled={isLoading || !canAfford || !name.trim()}
       >
-        <Text style={[styles.text, styles.createButtonText]}>Create</Text>
+        <Text style={[styles.text, styles.createButtonText]}>Create for {price===0 ? 'Free' : price}</Text>
+        {price !== 0 && <CoinsIcon width={30} height={30} color={Colors.White} />}
       </Pressable>
     </View>
   );

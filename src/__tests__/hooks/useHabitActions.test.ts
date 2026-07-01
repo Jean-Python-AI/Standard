@@ -1,7 +1,8 @@
 import { renderHook, act } from '@testing-library/react-native';
 import { useHabitActions } from '@/hooks/useHabitActions';
 
-const mockValues = jest.fn();
+const mockReturning = jest.fn();
+const mockValues = jest.fn(() => ({ returning: mockReturning }));
 const mockWhereValues = jest.fn();
 const mockWhereSelect = jest.fn();
 const mockWhereDelete = jest.fn();
@@ -21,16 +22,16 @@ describe('useHabitActions', () => {
   });
 
   it('should create a habit successfully', async () => {
-    mockValues.mockResolvedValue(undefined);
+    mockReturning.mockResolvedValue([{ id: 1 }]);
 
     const { result } = renderHook(() => useHabitActions());
 
-    let success: boolean | undefined;
+    let res: number | false | undefined;
     await act(async () => {
-      success = await result.current.create('Meditate', 'idea', '#FF3B30', 0, 10);
+      res = await result.current.create('Meditate', 'idea', '#FF3B30', 0, 10);
     });
 
-    expect(success).toBe(true);
+    expect(res).toBe(1);
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeNull();
     expect(mockValues).toHaveBeenCalledWith({ name: 'Meditate', icon: 'idea', color: '#FF3B30', colorId: 0, price: 10 });
@@ -70,16 +71,16 @@ describe('useHabitActions', () => {
   });
 
   it('should handle creation error', async () => {
-    mockValues.mockRejectedValue(new Error('DB Error'));
+    mockValues.mockReturnValue({ returning: jest.fn().mockRejectedValue(new Error('DB Error')) });
 
     const { result } = renderHook(() => useHabitActions());
 
-    let success: boolean | undefined;
+    let res: number | false | undefined;
     await act(async () => {
-      success = await result.current.create('Meditate', 'idea', '#FF3B30', 0, 10);
+      res = await result.current.create('Meditate', 'idea', '#FF3B30', 0, 10);
     });
 
-    expect(success).toBe(false);
+    expect(res).toBe(false);
     expect(result.current.error).toBe('Erreur lors de la création');
     expect(result.current.isLoading).toBe(false);
   });

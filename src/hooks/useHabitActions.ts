@@ -15,8 +15,8 @@ export function useHabitActions() {
     setIsLoading(true);
     setError(null);
     try {
-      await db.insert(habits).values({ name, icon, color, colorId, price });
-      return true;
+      const result = await db.insert(habits).values({ name, icon, color, colorId, price }).returning({ id: habits.id });
+      return result.length > 0 ? result[0].id : false;
     } catch (e) {
       setError('Erreur lors de la création');
       console.error('Failed to create habit:', e);
