@@ -20,7 +20,7 @@ export default function Step4() {
           onPress={() => setColorId(((colorId + 1) % nbColors) as 0 | 1 | 2 | 3 | 4 | 5 | 6)}
         >
           <EditIcon width={IconSize.xs} height={IconSize.xs} color={Colors.White} />
-          <Text style={{ color:Colors.White, fontFamily: Fonts.bold, fontSize: 15 }}>Change Color</Text>
+          <Text style={{ color: Colors.White, fontFamily: Fonts.bold, fontSize: 15 }}>Change Color</Text>
         </Pressable>
       </View>
 
@@ -51,19 +51,19 @@ const styles = StyleSheet.create({
   colorButton: {
     padding: 8,
     gap: 10,
-    height: 40,
     paddingHorizontal: 15,
     borderRadius: BorderRadius.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 0,
-    borderColor: Colors.Black,
-    flexDirection: 'row'
+    borderWidth: 2,
+    borderColor: Colors.White,
+    flexDirection: 'row',
   },
   iconSection: {
     marginTop: Spacing.sm,
     alignItems: 'center',
     flexDirection: 'column',
     gap: Spacing.sm,
+    width: '100%',
   },
 });

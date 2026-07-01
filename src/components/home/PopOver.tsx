@@ -2,7 +2,7 @@ import CoinsIcon from '@/assets/icons/Coins.svg';
 import TrackIcon from '@/assets/icons/track.svg';
 import { BorderRadius, Colors, Fonts, IconSize, Opacity, Shadows, Spacing, SpringConfig, Typography } from '@/constants';
 import LottieView from 'lottie-react-native';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSequence, withSpring } from 'react-native-reanimated';
 
@@ -18,9 +18,10 @@ interface BottomSheetHabitProps {
   visible: boolean;
   onClose: () => void;
   streak: number;
+  onCoinsEarned?: () => void;
 }
 
-export default function PopOver({ visible, onClose, streak }: BottomSheetHabitProps) {
+export default function PopOver({ visible, onClose, streak, onCoinsEarned }: BottomSheetHabitProps) {
   const translateY = useSharedValue(SHEET_HEIGHT); // commence caché
 
   useEffect(() => {
@@ -39,16 +40,9 @@ export default function PopOver({ visible, onClose, streak }: BottomSheetHabitPr
 
   const buttonscale = useSharedValue(1);
   const bounceY = useSharedValue(0);
-  const lottieRef = useRef<LottieView>(null);
-  const [showCoinsLottie, setShowCoinsLottie] = useState(false);
-
-  const handleCoinsFinish = useCallback(() => {
-    setShowCoinsLottie(false);
-  }, []);
 
   useEffect(() => {
     if (visible && streak >= 7) {
-      setShowCoinsLottie(true);
       bounceY.value = 0;
       bounceY.value = withSequence(
         withSpring(-15, SpringConfig.bouncy),
@@ -60,6 +54,11 @@ export default function PopOver({ visible, onClose, streak }: BottomSheetHabitPr
   const bounceStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: bounceY.value }],
   }));
+
+  const handlePress = () => {
+    if (streak >= 7) onCoinsEarned?.();
+    onClose();
+  };
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents={visible ? 'auto' : 'none'}>
@@ -116,7 +115,7 @@ export default function PopOver({ visible, onClose, streak }: BottomSheetHabitPr
         <View style={{ width: '100%', backgroundColor: Colors.primaryBackground, height: 170 }}>
             <View style={[{ backgroundColor: Colors.overlay, alignItems: 'center', padding: Spacing.md, height:170 }]}>
                 <AnimatedPressable
-                    onPress={onClose}
+                    onPress={handlePress}
                     style={styles.Button}
                     onPressIn={() => {buttonscale.value = withSpring(0.9, SpringConfig.snappy);}}
                     onPressOut={() => {buttonscale.value = withSpring(1, {mass: 1, stiffness: 400})}}
@@ -127,20 +126,6 @@ export default function PopOver({ visible, onClose, streak }: BottomSheetHabitPr
             </View>
         </View>
       </Animated.View>
-
-      {/* Coins Lottie full screen */}
-      {showCoinsLottie && (
-        <View style={[StyleSheet.absoluteFill, { zIndex: 2000 }]} pointerEvents="none">
-          <LottieView
-            ref={lottieRef}
-            source={require('@/assets/lotties/coins.json')}
-            autoPlay
-            loop={false}
-            onAnimationFinish={handleCoinsFinish}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </View>
-      )}
     </View>
   );
 }

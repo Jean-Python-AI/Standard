@@ -22,5 +22,6 @@ export const ColorsHabits = [
   '#26a82e', // Vert
   '#0f93ff', // Bleu
   '#222fa5', // Indigo
-  '#f98faf', // Violet
+  '#f98faf', // Rose
+  '#cb008b', // Violet
 ] as const;

@@ -40,13 +40,6 @@ export default function Start() {
         >
           <Text style={styles.buttonText}>Start</Text>
         </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [styles.buttonSecondary, { opacity: pressed ? Opacity.pressed : 1 }]}
-          onPress={handleLogin}
-        >
-          <Text style={styles.buttonTextSecondary}>I already have an account</Text>
-        </Pressable>
       </View>
     </View>
   );

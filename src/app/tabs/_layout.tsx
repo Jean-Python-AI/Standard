@@ -10,9 +10,10 @@ import { BottomSheetProvider, useBottomSheet } from '@/contexts/BottomSheetConte
 import { OverlayProvider, useOverlay } from '@/contexts/OverlayContext';
 import { useStreak } from '@/hooks/useStreak';
 import { Tabs, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import LottieView from 'lottie-react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -88,6 +89,8 @@ function TabLayoutContent() {
   const { visible: overlayVisible, close: closeOverlay, content } = useOverlay();
   const { streak, refresh: streakRefresh } = useStreak();
   const [tabIndex, setTabIndex] = useState(0);
+  const lottieRef = useRef<LottieView>(null);
+  const [showCoinsLottie, setShowCoinsLottie] = useState(false);
 
   useEffect(() => {
     if (overlayVisible) {
@@ -122,8 +125,22 @@ function TabLayoutContent() {
         onSave={onSave}
         onDelete={onDelete}
       />
-      {overlayVisible && !content && <HomePopOver visible onClose={closeOverlay} streak={streak} />}
+      {overlayVisible && !content && <HomePopOver visible onClose={closeOverlay} streak={streak} onCoinsEarned={() => setShowCoinsLottie(true)} />}
       {overlayVisible && content && <PopOver visible onClose={closeOverlay}>{content}</PopOver>}
+
+      {/* Coins Lottie full screen */}
+      {showCoinsLottie && (
+        <View style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 2000 }]} pointerEvents="none">
+          <LottieView
+            ref={lottieRef}
+            source={require('@/assets/lotties/coins.json')}
+            autoPlay
+            loop={false}
+            onAnimationFinish={() => setShowCoinsLottie(false)}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </View>
+      )}
     </>
   );
 }
