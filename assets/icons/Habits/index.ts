@@ -5,7 +5,6 @@ import BxBxsFilm from './BxBxsFilm.svg';
 import BxBxsFlorist from './BxBxsFlorist.svg';
 import BxBxsGraduation from './BxBxsGraduation.svg';
 import BxBxsHotel from './BxBxsHotel.svg';
-import BxBxsLemon from './BxBxsLemon.svg';
 import BxBxsSchool from './BxBxsSchool.svg';
 import BxBxsTimer from './BxBxsTimer.svg';
 import BxBxsTrain from './BxBxsTrain.svg';
@@ -13,7 +12,6 @@ import BxRun from './BxRun.svg';
 import FeCar from './FeCar.svg';
 import FeCart from './FeCart.svg';
 import FeRocket from './FeRocket.svg';
-import HeroiconsCodeBracketSquare20Solid from './HeroiconsCodeBracketSquare20Solid.svg';
 import IcBaselineColorLens from './IcBaselineColorLens.svg';
 import IcBaselineDiversity3 from './IcBaselineDiversity3.svg';
 import IcBaselineDryCleaning from './IcBaselineDryCleaning.svg';
@@ -39,7 +37,6 @@ export const ICON_MAP: Record<string, React.ComponentType<any>> = {
   BxBxsFlorist,
   BxBxsGraduation,
   BxBxsHotel,
-  BxBxsLemon,
   BxBxsSchool,
   BxBxsTimer,
   BxBxsTrain,
@@ -47,7 +44,6 @@ export const ICON_MAP: Record<string, React.ComponentType<any>> = {
   FeCar,
   FeCart,
   FeRocket,
-  HeroiconsCodeBracketSquare20Solid,
   IcBaselineColorLens,
   IcBaselineDiversity3,
   IcBaselineDryCleaning,

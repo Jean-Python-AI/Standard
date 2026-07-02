@@ -5,70 +5,22 @@ import { BorderRadius, Colors, Spacing, Typography } from '@/constants';
 import { useOverlay } from '@/contexts/OverlayContext';
 import { useCheckers } from '@/hooks/useCheckers';
 import { useTimeUntilMidnight } from '@/hooks/useTimeUntilMidnight';
-import { useWallet } from '@/hooks/useWallet';
+import { useStreakReward } from '@/hooks/useStreakReward';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
-import { db } from '@/db/clients';
-import { allHabitLogs } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
 
 type ListItem =
   | { type: 'divider'; key: string }
   | { type: 'checker'; key: string; id: number; label: string; color: string; checked: boolean; icon: string };
 
-function getTodayString(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function subtractDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  d.setDate(d.getDate() - days);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-async function computeStreak(): Promise<number> {
-  const today = getTodayString();
-  const rows = await db
-    .select()
-    .from(allHabitLogs)
-    .where(eq(allHabitLogs.checked, true))
-    .orderBy(desc(allHabitLogs.date));
-
-  const checkedDates = new Set(rows.map(r => r.date));
-
-  if (!checkedDates.has(today)) return 0;
-
-  let count = 1;
-  let current = today;
-
-  while (true) {
-    const prev = subtractDays(current, 1);
-    if (checkedDates.has(prev)) {
-      count++;
-      current = prev;
-    } else {
-      break;
-    }
-  }
-
-  return count;
-}
-
 export default function Index() {
   const { checkers, allChecked, toggle, refresh, isLoading } = useCheckers();
   const { open: openPopOver, setPendingNewHabit } = useOverlay();
   const { hoursLeft } = useTimeUntilMidnight();
-  const { addCoins } = useWallet();
+  const { tryGrantReward } = useStreakReward();
   const router = useRouter();
   const prevAllChecked = useRef(allChecked);
   const coinsAddedToday = useRef(false);
@@ -86,15 +38,11 @@ export default function Index() {
 
       if (!coinsAddedToday.current) {
         coinsAddedToday.current = true;
-        computeStreak().then(streak => {
-          if (streak > 0 && streak % 7 === 0) {
-            addCoins(10);
-          }
-        });
+        tryGrantReward().catch(console.error);
       }
     }
     prevAllChecked.current = allChecked;
-  }, [allChecked, openPopOver, addCoins]);
+  }, [allChecked, openPopOver, tryGrantReward]);
 
   const data = useMemo<ListItem[]>(() => {
     if (checkers.length === 0) {
@@ -197,7 +145,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     width: '100%',
     paddingHorizontal: Spacing.xs,
-    paddingBottom: 300,
+    paddingBottom: Spacing.xxl,
   },
   text: {
     ...Typography.h1,

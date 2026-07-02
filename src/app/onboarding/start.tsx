@@ -1,6 +1,7 @@
 import { BorderRadius, Colors, Opacity, Spacing, Typography } from '@/constants';
 import { usePressGuard } from '@/hooks/usePressGuard';
 import { useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -26,10 +27,16 @@ export default function Start() {
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.heroText}>Fix{'\n'}
-          standard{'\n'}
-          you never{'\n'}
-          break
+        <LottieView
+          source={require('@/assets/lotties/Fire.json')}
+          autoPlay
+          loop
+          speed={1}
+          style={{ width: 150, height: 150, backgroundColor: 'transparent' }}
+        />
+        <Text style={styles.heroText}>Your daily{'\n'}
+          non-negotiables.{'\n'}
+          Tracked.
         </Text>
       </View>
 
@@ -56,6 +63,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column',
+    gap: Spacing.lg,
   },
   bottom: {
     width: '100%',

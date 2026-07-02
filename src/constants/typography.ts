@@ -2,7 +2,7 @@ import { Fonts } from './Fonts';
 
 export const Typography = {
   heroNumber: { fontSize: 52, fontFamily: Fonts.bold },
-  heroText: { fontSize: 55, fontFamily: Fonts.bold },
+  heroText: { fontSize: 40, fontFamily: Fonts.bold },
   h1: { fontSize: 24, fontFamily: Fonts.bold },
   h2: { fontSize: 20, fontFamily: Fonts.bold },
   h2Medium: { fontSize: 20, fontFamily: Fonts.medium },

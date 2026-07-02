@@ -1,18 +1,11 @@
 import { ColorsHabits } from '@/constants/Colors';
 import { db } from '@/db/clients';
 import { habits, habitLogs } from '@/db/schema';
+import { getTodayString } from '@/utils/dateUtils';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { eq, and } from 'drizzle-orm';
 import type { Checker } from '@/types/habit';
 import { syncAllHabitLog } from './useAllHabitLogs';
-
-function getTodayString(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
 
 export function useCheckers() {
   const [checkers, setCheckers] = useState<Checker[]>([]);

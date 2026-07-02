@@ -1,6 +1,6 @@
 import CoinsIcon from '@/assets/icons/Coins.svg';
 import TrackIcon from '@/assets/icons/track.svg';
-import { BorderRadius, Colors, Fonts, IconSize, Opacity, Shadows, Spacing, SpringConfig, Typography } from '@/constants';
+import { BorderRadius, Colors, Fonts, IconSize, Opacity, Shadows, Spacing, SpringConfig, Typography, STREAK_REWARD_THRESHOLD, COINS_REWARD_AMOUNT } from '@/constants';
 import LottieView from 'lottie-react-native';
 import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -9,10 +9,8 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSequence, 
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const SevenDaysGift = 10; // nombre de pièces que l'on gagne après 7 jours de streak
-
-const SHEET_VIEW_HEIGHT = 50; // hauteur du sheet que l'ont retire de visible
-const SHEET_HEIGHT = 460; // taille du sheet
+const SHEET_VIEW_HEIGHT = 50;
+const SHEET_HEIGHT = 460;
 
 interface BottomSheetHabitProps {
   visible: boolean;
@@ -42,7 +40,7 @@ export default function PopOver({ visible, onClose, streak, onCoinsEarned }: Bot
   const bounceY = useSharedValue(0);
 
   useEffect(() => {
-    if (visible && streak >= 7) {
+    if (visible && streak >= STREAK_REWARD_THRESHOLD) {
       bounceY.value = 0;
       bounceY.value = withSequence(
         withSpring(-15, SpringConfig.bouncy),
@@ -56,7 +54,7 @@ export default function PopOver({ visible, onClose, streak, onCoinsEarned }: Bot
   }));
 
   const handlePress = () => {
-    if (streak >= 7) onCoinsEarned?.();
+    if (streak >= STREAK_REWARD_THRESHOLD) onCoinsEarned?.();
     onClose();
   };
 
@@ -103,9 +101,9 @@ export default function PopOver({ visible, onClose, streak, onCoinsEarned }: Bot
                         <CoinsIcon
                           width={IconSize.lg}
                           height={IconSize.lg}
-                          style={{ opacity: 6 < streak ? 1 : Opacity.disabled }}
+                          style={{ opacity: STREAK_REWARD_THRESHOLD - 1 < streak ? 1 : Opacity.disabled }}
                         />
-                        <Text style={[styles.subText, { fontFamily: Fonts.bold, marginTop: -Spacing.xxs, color: 6 < streak ? Colors.Black : Colors.inactive }]}>+{SevenDaysGift}</Text>
+                        <Text style={[styles.subText, { fontFamily: Fonts.bold, marginTop: -Spacing.xxs, color: STREAK_REWARD_THRESHOLD - 1 < streak ? Colors.Black : Colors.inactive }]}>+{COINS_REWARD_AMOUNT}</Text>
                       </Animated.View>
                   </View>
                 </View>
@@ -120,8 +118,8 @@ export default function PopOver({ visible, onClose, streak, onCoinsEarned }: Bot
                     onPressIn={() => {buttonscale.value = withSpring(0.9, SpringConfig.snappy);}}
                     onPressOut={() => {buttonscale.value = withSpring(1, {mass: 1, stiffness: 400})}}
                 >
-                    <Text style={styles.textButton}>{7 === streak ? '+10' : 'Check'}</Text>
-                    {7 === streak && (<CoinsIcon width={IconSize.md} height={IconSize.md} color={Colors.White} />)}
+                    <Text style={styles.textButton}>{STREAK_REWARD_THRESHOLD === streak ? `+${COINS_REWARD_AMOUNT}` : 'Check'}</Text>
+                    {STREAK_REWARD_THRESHOLD === streak && (<CoinsIcon width={IconSize.md} height={IconSize.md} color={Colors.White} />)}
                 </AnimatedPressable>
             </View>
         </View>

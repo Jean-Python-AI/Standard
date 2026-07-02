@@ -1,26 +1,10 @@
 import { db } from '@/db/clients';
 import { allHabitLogs } from '@/db/schema';
+import { getTodayString, subtractDays } from '@/utils/dateUtils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { desc, eq } from 'drizzle-orm';
 
-function getTodayString(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function subtractDays(dateStr: string, days: number): string {
-  const d = new Date(dateStr + 'T00:00:00');
-  d.setDate(d.getDate() - days);
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-async function computeStreak(): Promise<number> {
+export async function computeStreak(): Promise<number> {
   const today = getTodayString();
   const rows = await db
     .select()

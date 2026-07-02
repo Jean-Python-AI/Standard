@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COINS_STORAGE_KEY, LAST_REWARDED_STORAGE_KEY } from '@/constants';
 import { useCallback, useEffect, useState } from 'react';
-
-const COINS_KEY = 'coins';
 
 export function useWallet() {
   const [coins, setCoins] = useState(0);
@@ -9,7 +8,7 @@ export function useWallet() {
 
   const refresh = useCallback(async () => {
     try {
-      const raw = await AsyncStorage.getItem(COINS_KEY);
+      const raw = await AsyncStorage.getItem(COINS_STORAGE_KEY);
       setCoins(raw ? parseInt(raw, 10) : 0);
     } catch (e) {
       console.error('Failed to load coins:', e);
@@ -25,20 +24,31 @@ export function useWallet() {
 
   const save = useCallback(async (newAmount: number) => {
     setCoins(newAmount);
-    await AsyncStorage.setItem(COINS_KEY, String(newAmount));
+    await AsyncStorage.setItem(COINS_STORAGE_KEY, String(newAmount));
   }, []);
 
   const addCoins = useCallback(async (amount: number) => {
-    const newAmount = coins + amount;
-    await save(newAmount);
-  }, [coins, save]);
+    const raw = await AsyncStorage.getItem(COINS_STORAGE_KEY);
+    const current = raw ? parseInt(raw, 10) : 0;
+    await save(current + amount);
+  }, [save]);
 
   const deductCoins = useCallback(async (amount: number): Promise<boolean> => {
-    if (coins < amount) return false;
-    const newAmount = coins - amount;
-    await save(newAmount);
+    const raw = await AsyncStorage.getItem(COINS_STORAGE_KEY);
+    const current = raw ? parseInt(raw, 10) : 0;
+    if (current < amount) return false;
+    await save(current - amount);
     return true;
-  }, [coins, save]);
+  }, [save]);
 
-  return { coins, isLoading, addCoins, deductCoins, refresh };
+  const getLastRewardedStreak = useCallback(async (): Promise<number> => {
+    const raw = await AsyncStorage.getItem(LAST_REWARDED_STORAGE_KEY);
+    return raw ? parseInt(raw, 10) : 0;
+  }, []);
+
+  const setLastRewardedStreak = useCallback(async (value: number) => {
+    await AsyncStorage.setItem(LAST_REWARDED_STORAGE_KEY, String(value));
+  }, []);
+
+  return { coins, isLoading, addCoins, deductCoins, refresh, getLastRewardedStreak, setLastRewardedStreak };
 }

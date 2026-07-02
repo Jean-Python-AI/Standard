@@ -1,8 +1,11 @@
 import CoinsIcon from '@/assets/icons/Coins.svg';
-import { BorderRadius, Colors, IconSize, Opacity, Spacing, Typography } from '@/constants';
+import { BorderRadius, Colors, IconSize, Spacing, Typography } from '@/constants';
 import { useEffect } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+
+const SCALE_HIDDEN = 0.7;
+const SPRING_CONFIG = { damping: 40, stiffness: 300 } as const;
 
 interface ConfirmDeletePopOverProps {
   visible: boolean;
@@ -19,13 +22,10 @@ export default function ConfirmDeletePopOver({
   onConfirm,
   onCancel,
 }: ConfirmDeletePopOverProps) {
-  const scale = useSharedValue(0.7);
+  const scale = useSharedValue(SCALE_HIDDEN);
 
   useEffect(() => {
-    scale.value = withSpring(visible ? 1 : 0.7, {
-      damping: 40,
-      stiffness: 300,
-    });
+    scale.value = withSpring(visible ? 1 : SCALE_HIDDEN, SPRING_CONFIG);
   }, [visible, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -40,25 +40,23 @@ export default function ConfirmDeletePopOver({
       onRequestClose={onCancel}
     >
       <Pressable style={styles.backdrop} onPress={onCancel}>
-        <Pressable onPress={e => e.stopPropagation()}>
-          <Animated.View style={[styles.card, animatedStyle]}>
-            <Text style={styles.title}>Supprimer {habitName} ?</Text>
+        <Animated.View style={[styles.card, animatedStyle]}>
+          <Text style={styles.title}>Delete {habitName} ?</Text>
 
-            <View style={styles.refundRow}>
-              <Text style={styles.refundText}>pour récupérer {refundAmount}</Text>
-              <CoinsIcon width={IconSize.xs} height={IconSize.xs} color={Colors.Black} />
-            </View>
+          <View style={styles.refundRow}>
+            <Text style={styles.refundText}>And recover {refundAmount}</Text>
+            <CoinsIcon width={IconSize.xs} height={IconSize.xs} color={Colors.inactive} />
+          </View>
 
-            <View style={styles.buttons}>
-              <Pressable style={styles.cancelButton} onPress={onCancel}>
-                <Text style={styles.cancelText}>Annuler</Text>
-              </Pressable>
-              <Pressable style={styles.confirmButton} onPress={onConfirm}>
-                <Text style={styles.confirmText}>Supprimer</Text>
-              </Pressable>
-            </View>
-          </Animated.View>
-        </Pressable>
+          <View style={styles.buttons}>
+            <Pressable style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </Pressable>
+            <Pressable style={styles.confirmButton} onPress={onConfirm}>
+              <Text style={styles.confirmText}>Delete</Text>
+            </Pressable>
+          </View>
+        </Animated.View>
       </Pressable>
     </Modal>
   );
@@ -77,6 +75,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     width: '85%',
     gap: Spacing.sm,
+    alignItems: 'center',
   },
   title: {
     ...Typography.h1,

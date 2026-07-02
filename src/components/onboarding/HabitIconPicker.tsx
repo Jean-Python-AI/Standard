@@ -10,7 +10,12 @@ interface HabitIconPickerProps {
 
 export default function HabitIconPicker({ selected, onSelect }: HabitIconPickerProps) {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    >
       <View style={styles.grid}>
         {ICON_NAMES.map((name) => {
           const Icon = ICON_MAP[name];
@@ -39,16 +44,15 @@ const styles = StyleSheet.create({
   container: {
     maxHeight: 300,
     width: '100%',
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.White,
-    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+  },
+  content: {
+    paddingHorizontal: Spacing.sm,
   },
   grid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: Spacing.xs,
-    justifyContent: 'center',
-    width: '100%',
+    justifyContent: 'flex-start',
   },
   iconButton: {
     width: 50,

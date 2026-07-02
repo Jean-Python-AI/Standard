@@ -16,7 +16,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const ONBOARDING_STEPS = ['step1', 'step2', 'step3', 'step4', 'step5'] as const;
+const ONBOARDING_STEPS = ['step1', 'step2', 'step3', 'step5'] as const;
 const TOTAL_STEPS = ONBOARDING_STEPS.length;
 const DOT_SIZE = 8;
 const DOT_GAP = 8;
